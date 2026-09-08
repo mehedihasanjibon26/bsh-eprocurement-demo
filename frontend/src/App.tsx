@@ -1,52 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-
+﻿import { Outlet } from "react-router-dom";
+import { LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { api } from "@/services/api";
+import { BshBrand } from "@/components/bsh-brand";
+import { useAuth } from "@/features/auth/use-auth";
 
-type HealthResponse = {
-  status: string;
-  service: string;
-};
-
-function App() {
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["api-health"],
-    queryFn: async () => {
-      const response = await api.get<HealthResponse>("/health");
-      return response.data;
-    },
-  });
+export default function App() {
+  const { status, retry } = useAuth();
+  if (status === "ready") return <Outlet />;
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <div className="space-y-4 text-center">
-        <h1 className="text-3xl font-semibold">BSH E-Procurement</h1>
-
-        <p className="text-muted-foreground">
-          Frontend and backend connectivity check
-        </p>
-
-        {isLoading && (
-          <p className="text-sm text-muted-foreground">Checking API...</p>
-        )}
-
-        {isError && (
-          <p className="text-sm text-destructive">API connection failed</p>
-        )}
-
-        {data && (
-          <div className="rounded-lg border p-4">
-            <p className="font-medium">{data.service}</p>
-            <p className="text-sm text-muted-foreground">
-              Status: {data.status}
-            </p>
-          </div>
-        )}
-
-        <Button onClick={() => refetch()}>Check Again</Button>
-      </div>
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-6 p-6 text-center">
+      <BshBrand compact />
+      {status === "loading" ? <p role="status" className="flex items-center gap-2 text-sm text-muted-foreground"><LoaderCircle className="size-4 animate-spin" />Restoring your session…</p> : <div role="alert" className="space-y-4"><p className="text-sm text-muted-foreground">We couldn’t restore your session. Check your connection and try again.</p><Button onClick={retry}>Try again</Button></div>}
     </main>
   );
 }
-
-export default App;
