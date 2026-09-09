@@ -113,6 +113,22 @@ function workspaceRoutes(workspace: Workspace) {
                 .ContractPage,
             }),
           },
+          {
+            path: "delivery-receipts",
+            lazy: async () => ({
+              Component: (
+                await import("@/features/payments/delivery-receipt-page")
+              ).DeliveryReceiptPage,
+            }),
+          },
+          {
+            path: "invoices-payments",
+            lazy: async () => ({
+              Component: (
+                await import("@/features/payments/invoice-payment-page")
+              ).InvoicePaymentPage,
+            }),
+          },
         ]
       : []),
 
@@ -202,6 +218,8 @@ function workspaceRoutes(workspace: Workspace) {
             "evaluation",
             "purchase-orders",
             "contracts",
+            "delivery-receipts",
+            "invoices-payments",
           ].includes(item.path);
         }
 
