@@ -90,6 +90,29 @@ function workspaceRoutes(workspace: Workspace) {
               ).RequisitionFormPage,
             }),
           },
+          {
+            path: "evaluation",
+            lazy: async () => ({
+              Component: (
+                await import("@/features/evaluations/evaluation-page")
+              ).EvaluationPage,
+            }),
+          },
+          {
+            path: "purchase-orders",
+            lazy: async () => ({
+              Component: (
+                await import("@/features/contracts/purchase-order-page")
+              ).PurchaseOrderPage,
+            }),
+          },
+          {
+            path: "contracts",
+            lazy: async () => ({
+              Component: (await import("@/features/contracts/contract-page"))
+                .ContractPage,
+            }),
+          },
         ]
       : []),
 
@@ -172,7 +195,14 @@ function workspaceRoutes(workspace: Workspace) {
     ...workspaces[workspace].navigation
       .filter((item) => {
         if (workspace === "admin") {
-          return !["requisitions", "vendors", "tenders"].includes(item.path);
+          return ![
+            "requisitions",
+            "vendors",
+            "tenders",
+            "evaluation",
+            "purchase-orders",
+            "contracts",
+          ].includes(item.path);
         }
 
         return ![
