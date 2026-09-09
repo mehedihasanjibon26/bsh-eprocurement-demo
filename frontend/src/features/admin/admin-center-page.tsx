@@ -4,15 +4,18 @@ import {
   CheckCircle2,
   CircleAlert,
   Mail,
+  RotateCcw,
   Settings2,
   ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { resetDemoLocalState } from "@/lib/demo-reset";
 
 import {
   adminControlsDemo,
@@ -65,6 +68,8 @@ export function AdminCenterPage() {
     getInitialNotifications,
   );
 
+  const [resetOpen, setResetOpen] = useState(false);
+
   const unreadCount = notifications.filter(
     (notification) => !notification.read,
   ).length;
@@ -108,6 +113,14 @@ export function AdminCenterPage() {
     setNotifications(next);
 
     localStorage.setItem("bsh-phase8-notifications", JSON.stringify(next));
+  }
+
+  function resetDemo() {
+    resetDemoLocalState();
+
+    setTimeout(() => {
+      window.location.href = "/admin/dashboard";
+    }, 150);
   }
 
   return (
@@ -336,6 +349,45 @@ export function AdminCenterPage() {
       </Card>
 
       <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <RotateCcw className="size-5 text-primary" />
+
+            <CardTitle className="text-base">Demo Reset</CardTitle>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Return the interactive procurement demo to a clean
+            presentation-ready starting state.
+          </p>
+        </CardHeader>
+
+        <CardContent>
+          <div className="flex flex-col gap-4 rounded-xl border p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-medium">Reset Demo Progress</p>
+
+              <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted-foreground">
+                Clears saved bid progress, award and PO states, contract
+                progress, delivery and receipt status, invoice and payment
+                progress, notifications, and demo settings. Your current login
+                session will remain available.
+              </p>
+            </div>
+
+            <Button
+              variant="outline"
+              className="shrink-0"
+              onClick={() => setResetOpen(true)}
+            >
+              <RotateCcw className="size-4" />
+              Reset Demo Progress
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
         <CardContent className="flex items-start gap-3 p-5">
           <Settings2 className="mt-0.5 size-5 shrink-0 text-primary" />
 
@@ -351,6 +403,16 @@ export function AdminCenterPage() {
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmationDialog
+        open={resetOpen}
+        onOpenChange={setResetOpen}
+        title="Reset demo progress?"
+        description="This will clear the interactive demo progress created in the browser and return the workflow to its initial presentation state. Your login session will not be removed."
+        confirmLabel="Reset Demo"
+        destructive
+        onConfirm={resetDemo}
+      />
     </div>
   );
 }

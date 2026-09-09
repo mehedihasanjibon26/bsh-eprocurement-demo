@@ -20,7 +20,7 @@ class RequisitionSeeder extends Seeder
             'requester' => 'ICU Department',
             'estimated_budget' => 5000000.00,
             'required_date' => now()->addDays(30)->toDateString(),
-            'status' => 'pending_approval',
+            'status' => 'converted',
         ]);
     }
 }

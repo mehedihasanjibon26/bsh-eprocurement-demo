@@ -18,8 +18,9 @@ class TenderSeeder extends Seeder
             'category' => 'medical_equipment',
             'type' => 'public_tender',
             'closing_date' => now()->addDays(7),
-            'status' => 'evaluation',
-            'bid_count' => 3,
+            'status' => 'published',
+            'bid_count' => 0,
+            'requisition_id' => 1,
         ]);
 
         Tender::query()->create([
