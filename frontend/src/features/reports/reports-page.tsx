@@ -2,10 +2,13 @@ import {
   BarChart3,
   Building2,
   CircleDollarSign,
+  FileSpreadsheet,
+  FileText,
   Gavel,
   TrendingUp,
   WalletCards,
 } from "lucide-react";
+import { toast } from "sonner";
 import {
   Bar,
   BarChart,
@@ -17,6 +20,7 @@ import {
 } from "recharts";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
@@ -43,21 +47,43 @@ function formatCompactBdt(value: number) {
 }
 
 export function ReportsPage() {
+  function exportPdf() {
+    toast.success("PDF report export prepared for demo.");
+  }
+
+  function exportExcel() {
+    toast.success("Excel report export prepared for demo.");
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-          PROCUREMENT ANALYTICS
-        </p>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div>
+          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
+            PROCUREMENT ANALYTICS
+          </p>
 
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Reports
-        </h1>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Reports
+          </h1>
 
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Monitor procurement value, sourcing activity, vendor performance, and
-          payment progress across Bangladesh Specialized Hospital PLC.
-        </p>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Monitor procurement value, sourcing activity, vendor performance,
+            and payment progress across Bangladesh Specialized Hospital PLC.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={exportPdf}>
+            <FileText className="size-4" />
+            Export PDF
+          </Button>
+
+          <Button variant="outline" onClick={exportExcel}>
+            <FileSpreadsheet className="size-4" />
+            Export Excel
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -300,13 +326,12 @@ export function ReportsPage() {
             <BarChart3 className="mt-0.5 size-5 shrink-0 text-primary" />
 
             <div>
-              <p className="text-sm font-medium">Demo reporting coverage</p>
+              <p className="text-sm font-medium">Management reporting</p>
 
               <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                These dashboards demonstrate management-level procurement
-                visibility. Production reporting can later be extended with date
-                filters, downloadable reports, departmental analysis, and deeper
-                financial integrations.
+                Procurement reports can be exported to PDF and Excel in the
+                production implementation. This interactive demo showcases the
+                reporting and export workflow.
               </p>
             </div>
           </div>
