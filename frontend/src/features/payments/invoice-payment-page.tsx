@@ -1,17 +1,22 @@
 import { useState } from "react";
 import {
+  Building2,
+  CalendarDays,
   CheckCircle2,
   CircleDollarSign,
+  CreditCard,
   FileCheck2,
+  FileText,
+  PackageCheck,
   ReceiptText,
   Scale,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
   invoiceDemo,
@@ -53,12 +58,23 @@ function getInvoiceStage(): InvoiceStage {
   return "submitted";
 }
 
+const stageOrder: InvoiceStage[] = [
+  "submitted",
+  "verified",
+  "matched",
+  "approved",
+  "paid",
+];
+
 export function InvoicePaymentPage() {
   const [stage, setStage] = useState<InvoiceStage>(getInvoiceStage);
 
   const [verifyOpen, setVerifyOpen] = useState(false);
+
   const [matchOpen, setMatchOpen] = useState(false);
+
   const [approveOpen, setApproveOpen] = useState(false);
+
   const [paymentOpen, setPaymentOpen] = useState(false);
 
   const receiptConfirmed =
@@ -69,6 +85,19 @@ export function InvoicePaymentPage() {
 
   const invoiceFile =
     localStorage.getItem("bsh-phase7-invoice-file") ?? "Supplier Invoice.pdf";
+
+  const currentStageIndex = stageOrder.indexOf(stage);
+
+  const statusLabel =
+    stage === "submitted"
+      ? "Submitted"
+      : stage === "verified"
+        ? "Verified"
+        : stage === "matched"
+          ? "Matched"
+          : stage === "approved"
+            ? "Approved"
+            : "Paid";
 
   function verifyInvoice() {
     setStage("verified");
@@ -102,337 +131,511 @@ export function InvoicePaymentPage() {
     toast.success("Payment marked as paid");
   }
 
-  const statusLabel =
-    stage === "submitted"
-      ? "Submitted"
-      : stage === "verified"
-        ? "Verified"
-        : stage === "matched"
-          ? "Matched"
-          : stage === "approved"
-            ? "Approved"
-            : "Paid";
-
   if (!invoiceSubmitted) {
     return (
-      <div className="space-y-6">
-        <div>
-          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-            INVOICE & PAYMENT
-          </p>
+      <div className="min-w-0 space-y-7">
+        <section className="relative isolate overflow-hidden rounded-[30px] bg-gradient-to-br from-[#111827] via-[#312e81] to-[#0e7490] px-6 py-7 text-white shadow-[0_24px_70px_rgba(15,23,42,0.18)] sm:px-8 sm:py-8 lg:px-10">
+          <div className="pointer-events-none absolute inset-0 -z-10">
+            <div className="absolute -right-20 -top-28 size-[320px] rounded-full bg-cyan-300/15 blur-3xl" />
 
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            <div className="absolute -bottom-28 left-[30%] size-[300px] rounded-full bg-violet-400/15 blur-3xl" />
+          </div>
+
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-white/75">
+            <ReceiptText className="size-3.5 text-cyan-200" />
+            INVOICE & PAYMENT
+          </div>
+
+          <h1 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
             Invoices & Payments
           </h1>
 
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/60">
             Review supplier invoices, complete verification and three-way
-            matching, and manage payment progression.
+            matching, approve invoices and track payment progression.
           </p>
-        </div>
+        </section>
 
-        <Card>
-          <CardContent className="py-14 text-center">
-            <ReceiptText className="mx-auto size-10 text-muted-foreground" />
+        <section className="relative isolate overflow-hidden rounded-[26px] border border-white/90 bg-white p-6 shadow-[0_18px_50px_rgba(15,23,42,0.07)] sm:p-8">
+          <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400" />
 
-            <h2 className="mt-4 text-base font-semibold">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-[20px] bg-gradient-to-br from-indigo-100 via-violet-50 to-cyan-50 text-indigo-600">
+              <ReceiptText className="size-7" />
+            </div>
+
+            <p className="mt-5 text-[9px] font-semibold tracking-[0.16em] text-indigo-600">
+              WAITING FOR SUPPLIER
+            </p>
+
+            <h2 className="mt-2 text-xl font-semibold tracking-[-0.02em] text-slate-900">
               Awaiting Supplier Invoice
             </h2>
 
-            <p className="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
+            <p className="mx-auto mt-2 max-w-lg text-[11px] leading-5 text-slate-500">
               MediSupply Ltd. has not submitted the invoice for{" "}
               {invoiceDemo.poNumber} yet. The invoice will appear here after
               supplier submission.
             </p>
 
-            <div className="mx-auto mt-6 grid max-w-lg gap-3 rounded-lg border bg-muted/20 p-4 text-left sm:grid-cols-2">
-              <div>
-                <p className="text-xs text-muted-foreground">Purchase Order</p>
+            <div className="mt-7 grid gap-3 text-left sm:grid-cols-2">
+              <div className="rounded-[16px] border border-indigo-100 bg-indigo-50/40 p-4">
+                <p className="text-[8px] font-semibold tracking-[0.13em] text-indigo-500">
+                  PURCHASE ORDER
+                </p>
 
-                <p className="mt-1 text-sm font-medium">
+                <p className="mt-2 text-[12px] font-semibold text-slate-900">
                   {invoiceDemo.poNumber}
                 </p>
               </div>
 
-              <div>
-                <p className="text-xs text-muted-foreground">Supplier</p>
+              <div className="rounded-[16px] border border-violet-100 bg-violet-50/40 p-4">
+                <p className="text-[8px] font-semibold tracking-[0.13em] text-violet-500">
+                  SUPPLIER
+                </p>
 
-                <p className="mt-1 text-sm font-medium">{invoiceDemo.vendor}</p>
+                <p className="mt-2 text-[12px] font-semibold text-slate-900">
+                  {invoiceDemo.vendor}
+                </p>
               </div>
 
-              <div>
-                <p className="text-xs text-muted-foreground">Goods Receipt</p>
+              <div className="rounded-[16px] border border-cyan-100 bg-cyan-50/40 p-4">
+                <p className="text-[8px] font-semibold tracking-[0.13em] text-cyan-700">
+                  GOODS RECEIPT
+                </p>
 
-                <p className="mt-1 text-sm font-medium">
+                <p className="mt-2 text-[12px] font-semibold text-slate-900">
                   {receiptConfirmed ? invoiceDemo.receiptNumber : "Pending"}
                 </p>
               </div>
 
-              <div>
-                <p className="text-xs text-muted-foreground">
-                  Expected Invoice Value
+              <div className="rounded-[16px] border border-emerald-100 bg-emerald-50/40 p-4">
+                <p className="text-[8px] font-semibold tracking-[0.13em] text-emerald-600">
+                  EXPECTED VALUE
                 </p>
 
-                <p className="mt-1 text-sm font-medium">
+                <p className="mt-2 text-[12px] font-semibold text-emerald-700">
                   {formatBdt(invoiceDemo.amount)}
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </section>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-          INVOICE & PAYMENT
-        </p>
+    <div className="min-w-0 space-y-7">
+      {/* Hero */}
+      <section className="relative isolate overflow-hidden rounded-[30px] bg-gradient-to-br from-[#111827] via-[#312e81] to-[#0e7490] px-6 py-7 text-white shadow-[0_24px_70px_rgba(15,23,42,0.18)] sm:px-8 sm:py-8 lg:px-10">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -right-20 -top-28 size-[320px] rounded-full bg-cyan-300/15 blur-3xl" />
 
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Invoice Verification & Payment
-        </h1>
+          <div className="absolute -bottom-28 left-[30%] size-[300px] rounded-full bg-violet-400/15 blur-3xl" />
+        </div>
 
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Verify supplier billing, complete the three-way match, approve the
-          invoice, and track payment status.
-        </p>
-      </div>
-
-      {!receiptConfirmed && (
-        <Card>
-          <CardContent className="p-5">
-            <p className="font-medium">Goods receipt confirmation required</p>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-              Complete the delivery and goods receipt process before verifying
-              this supplier invoice.
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardContent className="p-5 sm:p-6">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-xs font-medium text-primary">
-                  {invoiceDemo.invoiceNumber}
-                </p>
-
-                <Badge variant={stage === "paid" ? "secondary" : "outline"}>
-                  {statusLabel}
-                </Badge>
-              </div>
-
-              <h2 className="mt-2 text-lg font-semibold">Supplier Invoice</h2>
-
-              <p className="mt-2 text-sm text-muted-foreground">
-                {invoiceDemo.vendor} · {invoiceDemo.poNumber}
-              </p>
+        <div className="flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-3 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-white/75">
+              <ReceiptText className="size-3.5 text-cyan-200" />
+              INVOICE & PAYMENT
             </div>
 
-            <div className="rounded-lg border bg-muted/20 px-5 py-4 lg:min-w-56 lg:text-right">
-              <p className="text-xs text-muted-foreground">Invoice Amount</p>
+            <h1 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
+              Invoice Verification & Payment
+            </h1>
 
-              <p className="mt-1 text-xl font-semibold">
-                {formatBdt(invoiceDemo.amount)}
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/60">
+              Verify supplier billing, complete the three-way match, approve the
+              invoice and track payment status.
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <span className="rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-[9px] font-medium text-white/55">
+                {invoiceDemo.invoiceNumber}
+              </span>
+
+              <span className="rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-[9px] font-medium text-white/55">
+                {invoiceDemo.poNumber}
+              </span>
+
+              <span className="rounded-full border border-white/10 bg-white/[0.07] px-3 py-1.5 text-[9px] font-medium text-white/55">
+                {invoiceDemo.vendor}
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full max-w-sm rounded-[18px] border border-white/15 bg-white/[0.08] p-4 backdrop-blur-md lg:w-auto lg:min-w-64">
+            <div className="flex items-start gap-3">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-cyan-200">
+                <CircleDollarSign className="size-4" />
+              </div>
+
+              <div>
+                <p className="text-[9px] font-semibold tracking-[0.14em] text-white/45">
+                  INVOICE AMOUNT
+                </p>
+
+                <p className="mt-1.5 text-lg font-semibold text-white">
+                  {formatBdt(invoiceDemo.amount)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {!receiptConfirmed && (
+        <section className="relative overflow-hidden rounded-[18px] border border-amber-100 bg-gradient-to-r from-amber-50 via-orange-50/70 to-rose-50/40 p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+              <PackageCheck className="size-5" />
+            </div>
+
+            <div>
+              <p className="text-[9px] font-semibold tracking-[0.14em] text-amber-700">
+                PREVIOUS STEP REQUIRED
+              </p>
+
+              <p className="mt-1.5 text-[12px] font-semibold text-amber-950">
+                Goods receipt confirmation required
+              </p>
+
+              <p className="mt-1 text-[10px] leading-5 text-amber-800">
+                Complete delivery and goods receipt before verifying this
+                supplier invoice.
               </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </section>
+      )}
 
-      <div className="grid gap-5 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="text-base">Invoice Details</CardTitle>
-          </CardHeader>
+      {/* KPI */}
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article className="rounded-[20px] border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-blue-50/60 p-5 shadow-[0_12px_35px_rgba(15,23,42,0.05)]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
+            <ReceiptText className="size-5" />
+          </div>
 
-          <CardContent className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            <div>
-              <p className="text-xs text-muted-foreground">Invoice Number</p>
+          <p className="mt-4 text-[9px] font-semibold tracking-[0.13em] text-indigo-500">
+            INVOICE
+          </p>
 
-              <p className="mt-1 text-sm font-medium">
+          <p className="mt-1.5 text-[14px] font-semibold text-slate-900">
+            {invoiceDemo.invoiceNumber}
+          </p>
+        </article>
+
+        <article className="rounded-[20px] border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-fuchsia-50/50 p-5 shadow-[0_12px_35px_rgba(15,23,42,0.05)]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+            <Building2 className="size-5" />
+          </div>
+
+          <p className="mt-4 text-[9px] font-semibold tracking-[0.13em] text-violet-500">
+            SUPPLIER
+          </p>
+
+          <p className="mt-1.5 text-[14px] font-semibold text-slate-900">
+            {invoiceDemo.vendor}
+          </p>
+        </article>
+
+        <article className="rounded-[20px] border border-cyan-100 bg-gradient-to-br from-cyan-50 via-white to-teal-50/60 p-5 shadow-[0_12px_35px_rgba(15,23,42,0.05)]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700">
+            <CalendarDays className="size-5" />
+          </div>
+
+          <p className="mt-4 text-[9px] font-semibold tracking-[0.13em] text-cyan-700">
+            DUE DATE
+          </p>
+
+          <p className="mt-1.5 text-[14px] font-semibold text-slate-900">
+            {formatDate(invoiceDemo.dueDate)}
+          </p>
+        </article>
+
+        <article className="rounded-[20px] border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-cyan-50/50 p-5 shadow-[0_12px_35px_rgba(15,23,42,0.05)]">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+            <ShieldCheck className="size-5" />
+          </div>
+
+          <p className="mt-4 text-[9px] font-semibold tracking-[0.13em] text-emerald-600">
+            PROCESSING STATUS
+          </p>
+
+          <p className="mt-1.5 text-[14px] font-semibold text-slate-900">
+            {statusLabel}
+          </p>
+        </article>
+      </section>
+
+      {/* Invoice identity */}
+      <section className="relative overflow-hidden rounded-[24px] border border-white/90 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+        <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400" />
+
+        <div className="flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-[10px] font-semibold tracking-[0.12em] text-indigo-600">
                 {invoiceDemo.invoiceNumber}
               </p>
+
+              <Badge
+                variant={stage === "paid" ? "secondary" : "outline"}
+                className={
+                  stage === "paid"
+                    ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+                    : "border-violet-100 bg-violet-50 text-violet-700"
+                }
+              >
+                {statusLabel}
+              </Badge>
+            </div>
+
+            <h2 className="mt-2 text-xl font-semibold text-slate-900">
+              Supplier Invoice
+            </h2>
+
+            <p className="mt-2 text-[11px] text-slate-500">
+              {invoiceDemo.vendor} · {invoiceDemo.poNumber}
+            </p>
+          </div>
+
+          <div className="rounded-[18px] border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-cyan-50/50 px-5 py-4 lg:min-w-64 lg:text-right">
+            <p className="text-[8px] font-semibold tracking-[0.13em] text-emerald-600">
+              INVOICE VALUE
+            </p>
+
+            <p className="mt-1.5 text-xl font-semibold text-emerald-700">
+              {formatBdt(invoiceDemo.amount)}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="grid gap-5 xl:grid-cols-3">
+        {/* Details */}
+        <section className="relative overflow-hidden rounded-[24px] border border-white/90 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)] xl:col-span-2">
+          <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-violet-500 via-indigo-500 to-cyan-400" />
+
+          <header className="flex items-start gap-3 border-b border-slate-100 px-5 pb-5 pt-6 sm:px-6">
+            <div className="flex size-11 items-center justify-center rounded-[14px] bg-gradient-to-br from-violet-100 to-cyan-50 text-violet-600">
+              <FileText className="size-5" />
             </div>
 
             <div>
-              <p className="text-xs text-muted-foreground">Purchase Order</p>
-
-              <p className="mt-1 text-sm font-medium">{invoiceDemo.poNumber}</p>
-            </div>
-
-            <div>
-              <p className="text-xs text-muted-foreground">Goods Receipt</p>
-
-              <p className="mt-1 text-sm font-medium">
-                {invoiceDemo.receiptNumber}
+              <p className="text-[9px] font-semibold tracking-[0.17em] text-violet-600">
+                BILLING INFORMATION
               </p>
+
+              <h2 className="mt-1 text-[17px] font-semibold text-slate-900">
+                Invoice Details
+              </h2>
             </div>
+          </header>
 
-            <div>
-              <p className="text-xs text-muted-foreground">Invoice Document</p>
+          <div className="grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-3 sm:p-6">
+            {[
+              ["INVOICE NUMBER", invoiceDemo.invoiceNumber],
+              ["PURCHASE ORDER", invoiceDemo.poNumber],
+              ["GOODS RECEIPT", invoiceDemo.receiptNumber],
+              ["INVOICE DOCUMENT", invoiceFile],
+              ["SUBMITTED", formatDate(invoiceDemo.submittedDate)],
+              ["DUE DATE", formatDate(invoiceDemo.dueDate)],
+            ].map(([title, value]) => (
+              <div
+                key={title}
+                className="rounded-[16px] border border-slate-100 bg-gradient-to-br from-white to-indigo-50/25 p-4"
+              >
+                <p className="text-[8px] font-semibold tracking-[0.13em] text-slate-400">
+                  {title}
+                </p>
 
-              <p className="mt-1 text-sm font-medium">{invoiceFile}</p>
-            </div>
-
-            <div>
-              <p className="text-xs text-muted-foreground">Submitted</p>
-
-              <p className="mt-1 text-sm font-medium">
-                {formatDate(invoiceDemo.submittedDate)}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs text-muted-foreground">Due Date</p>
-
-              <p className="mt-1 text-sm font-medium">
-                {formatDate(invoiceDemo.dueDate)}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Processing Status</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            <div className="flex items-start gap-3">
-              <ReceiptText className="mt-0.5 size-4 text-teal-700" />
-
-              <div>
-                <p className="text-sm font-medium">Invoice Submitted</p>
-
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {invoiceDemo.invoiceNumber}
+                <p className="mt-2 break-words text-[11px] font-semibold text-slate-900">
+                  {value}
                 </p>
               </div>
-            </div>
+            ))}
+          </div>
+        </section>
 
-            <div className="flex items-start gap-3">
-              <FileCheck2
-                className={`mt-0.5 size-4 ${
-                  stage !== "submitted"
-                    ? "text-teal-700"
-                    : "text-muted-foreground"
-                }`}
-              />
+        {/* Processing */}
+        <section className="relative overflow-hidden rounded-[24px] border border-white/90 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+          <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-400" />
 
-              <div>
-                <p className="text-sm font-medium">Verification</p>
+          <header className="border-b border-slate-100 px-5 pb-5 pt-6">
+            <p className="text-[9px] font-semibold tracking-[0.17em] text-emerald-600">
+              WORKFLOW
+            </p>
 
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {stage === "submitted" ? "Pending verification" : "Verified"}
-                </p>
-              </div>
-            </div>
+            <h2 className="mt-1 text-[17px] font-semibold text-slate-900">
+              Processing Status
+            </h2>
+          </header>
 
-            <div className="flex items-start gap-3">
-              <Scale
-                className={`mt-0.5 size-4 ${
-                  ["matched", "approved", "paid"].includes(stage)
-                    ? "text-teal-700"
-                    : "text-muted-foreground"
-                }`}
-              />
+          <div className="relative space-y-3 p-5">
+            <div className="pointer-events-none absolute bottom-10 left-[37px] top-10 w-px bg-gradient-to-b from-indigo-200 via-cyan-200 to-emerald-200" />
 
-              <div>
-                <p className="text-sm font-medium">3-Way Match</p>
+            {[
+              {
+                title: "Invoice Submitted",
+                description: invoiceDemo.invoiceNumber,
+                icon: ReceiptText,
+                done: true,
+              },
+              {
+                title: "Verification",
+                description:
+                  currentStageIndex >= 1 ? "Verified" : "Pending verification",
+                icon: FileCheck2,
+                done: currentStageIndex >= 1,
+              },
+              {
+                title: "3-Way Match",
+                description: currentStageIndex >= 2 ? "MATCHED" : "Pending",
+                icon: Scale,
+                done: currentStageIndex >= 2,
+              },
+              {
+                title: "Payment Approval",
+                description:
+                  currentStageIndex >= 3 ? "Approved for payment" : "Pending",
+                icon: ShieldCheck,
+                done: currentStageIndex >= 3,
+              },
+              {
+                title: "Payment",
+                description: stage === "paid" ? "Paid" : "Pending",
+                icon: CircleDollarSign,
+                done: stage === "paid",
+              },
+            ].map((step) => {
+              const Icon = step.icon;
 
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {["matched", "approved", "paid"].includes(stage)
-                    ? "MATCHED"
-                    : "Pending"}
-                </p>
-              </div>
-            </div>
+              return (
+                <div key={step.title} className="relative flex gap-3">
+                  <div
+                    className={`relative z-10 flex size-9 shrink-0 items-center justify-center rounded-xl border ${
+                      step.done
+                        ? "border-emerald-100 bg-emerald-50 text-emerald-700"
+                        : "border-slate-100 bg-white text-slate-400"
+                    }`}
+                  >
+                    <Icon className="size-4" />
+                  </div>
 
-            <div className="flex items-start gap-3">
-              <CircleDollarSign
-                className={`mt-0.5 size-4 ${
-                  stage === "paid" ? "text-teal-700" : "text-muted-foreground"
-                }`}
-              />
+                  <div className="flex-1 rounded-[14px] border border-slate-100 bg-slate-50/50 p-3">
+                    <p className="text-[11px] font-semibold text-slate-800">
+                      {step.title}
+                    </p>
 
-              <div>
-                <p className="text-sm font-medium">Payment</p>
-
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {stage === "paid"
-                    ? "Paid"
-                    : stage === "approved"
-                      ? "Approved for payment"
-                      : "Pending"}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                    <p className="mt-1 text-[9px] text-slate-500">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">3-Way Match</CardTitle>
+      {/* 3 Way Match */}
+      <section className="relative overflow-hidden rounded-[24px] border border-white/90 bg-white shadow-[0_16px_45px_rgba(15,23,42,0.07)]">
+        <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-cyan-500 via-indigo-500 to-violet-500" />
 
-          <p className="text-xs text-muted-foreground">
-            Compare the purchase order, confirmed goods receipt, and supplier
-            invoice before payment approval.
-          </p>
-        </CardHeader>
+        <header className="flex items-start gap-3 border-b border-slate-100 px-5 pb-5 pt-6 sm:px-6">
+          <div className="flex size-11 items-center justify-center rounded-[14px] bg-gradient-to-br from-cyan-100 to-violet-50 text-cyan-700">
+            <Scale className="size-5" />
+          </div>
 
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-left text-sm">
+          <div>
+            <p className="text-[9px] font-semibold tracking-[0.17em] text-cyan-700">
+              CONTROL CHECK
+            </p>
+
+            <h2 className="mt-1 text-[17px] font-semibold text-slate-900">
+              3-Way Match
+            </h2>
+
+            <p className="mt-1 text-[10px] text-slate-500">
+              Compare the purchase order, confirmed goods receipt and supplier
+              invoice before payment approval.
+            </p>
+          </div>
+        </header>
+
+        <div className="p-4 sm:p-5">
+          <div className="overflow-x-auto rounded-[18px] border border-slate-100">
+            <table className="w-full min-w-[760px] text-left">
               <thead>
-                <tr className="border-b text-xs text-muted-foreground">
-                  <th className="pb-3 font-medium">Check</th>
+                <tr className="border-b border-slate-100 bg-gradient-to-r from-slate-50 via-cyan-50/30 to-violet-50/30">
+                  <th className="h-12 px-4 text-[10px] font-semibold tracking-[0.1em] text-slate-500">
+                    CHECK
+                  </th>
 
-                  <th className="pb-3 text-right font-medium">PO</th>
+                  <th className="h-12 px-4 text-right text-[10px] font-semibold tracking-[0.1em] text-slate-500">
+                    PO
+                  </th>
 
-                  <th className="pb-3 text-right font-medium">Receipt</th>
+                  <th className="h-12 px-4 text-right text-[10px] font-semibold tracking-[0.1em] text-slate-500">
+                    RECEIPT
+                  </th>
 
-                  <th className="pb-3 text-right font-medium">Invoice</th>
+                  <th className="h-12 px-4 text-right text-[10px] font-semibold tracking-[0.1em] text-slate-500">
+                    INVOICE
+                  </th>
 
-                  <th className="pb-3 text-right font-medium">Result</th>
+                  <th className="h-12 px-4 text-right text-[10px] font-semibold tracking-[0.1em] text-slate-500">
+                    RESULT
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
                 {matchRowsDemo.map((row) => (
-                  <tr key={row.id} className="border-b last:border-0">
-                    <td className="py-4 font-medium">{row.label}</td>
+                  <tr
+                    key={row.id}
+                    className="border-b border-slate-100 transition last:border-0 hover:bg-cyan-50/30"
+                  >
+                    <td className="px-4 py-4 text-[11px] font-semibold text-slate-900">
+                      {row.label}
+                    </td>
 
-                    <td className="py-4 text-right">
+                    <td className="px-4 py-4 text-right text-[10px] text-slate-600">
                       {row.label === "Purchase Order"
                         ? formatBdt(row.poValue)
                         : row.poValue}
                     </td>
 
-                    <td className="py-4 text-right">
+                    <td className="px-4 py-4 text-right text-[10px] text-slate-600">
                       {row.label === "Purchase Order"
                         ? formatBdt(row.receiptValue)
                         : row.receiptValue}
                     </td>
 
-                    <td className="py-4 text-right">
+                    <td className="px-4 py-4 text-right text-[10px] text-slate-600">
                       {row.label === "Purchase Order"
                         ? formatBdt(row.invoiceValue)
                         : row.invoiceValue}
                     </td>
 
-                    <td className="py-4 text-right">
-                      {["matched", "approved", "paid"].includes(stage) ? (
-                        <Badge variant="secondary">{row.status}</Badge>
+                    <td className="px-4 py-4 text-right">
+                      {currentStageIndex >= 2 ? (
+                        <Badge
+                          variant="secondary"
+                          className="border border-emerald-100 bg-emerald-50 text-emerald-700"
+                        >
+                          {row.status}
+                        </Badge>
                       ) : (
-                        <Badge variant="outline">Pending</Badge>
+                        <Badge
+                          variant="outline"
+                          className="border-amber-100 bg-amber-50 text-amber-700"
+                        >
+                          Pending
+                        </Badge>
                       )}
                     </td>
                   </tr>
@@ -441,115 +644,155 @@ export function InvoicePaymentPage() {
             </table>
           </div>
 
-          {["matched", "approved", "paid"].includes(stage) && (
-            <div className="mt-5 flex flex-col gap-4 rounded-xl border border-teal-200 bg-teal-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+          {currentStageIndex >= 2 && (
+            <div className="mt-5 flex flex-col gap-4 rounded-[18px] border border-emerald-100 bg-gradient-to-r from-emerald-50 via-white to-cyan-50 p-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-teal-700" />
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+                  <CheckCircle2 className="size-5" />
+                </div>
 
                 <div>
-                  <p className="font-semibold text-teal-900">
+                  <p className="text-[12px] font-semibold text-emerald-900">
                     3-Way Match: MATCHED
                   </p>
 
-                  <p className="mt-1 text-xs text-teal-800">
+                  <p className="mt-1 text-[9px] leading-4 text-emerald-800">
                     {threeWayMatchDemo.poNumber},{" "}
-                    {threeWayMatchDemo.receiptNumber}, and{" "}
+                    {threeWayMatchDemo.receiptNumber} and{" "}
                     {threeWayMatchDemo.invoiceNumber} are aligned.
                   </p>
                 </div>
               </div>
 
-              <p className="text-lg font-semibold text-teal-900">
+              <p className="text-lg font-semibold text-emerald-900">
                 {formatBdt(threeWayMatchDemo.totalAmount)}
               </p>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Invoice Action</CardTitle>
-        </CardHeader>
+      {/* Actions */}
+      <section className="relative overflow-hidden rounded-[22px] border border-white/90 bg-white p-5 shadow-[0_14px_40px_rgba(15,23,42,0.06)] sm:p-6">
+        <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400" />
 
-        <CardContent>
-          {stage === "submitted" && (
-            <Button
-              disabled={!receiptConfirmed}
-              onClick={() => setVerifyOpen(true)}
-            >
-              <FileCheck2 className="size-4" />
-              Verify Invoice
-            </Button>
-          )}
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[9px] font-semibold tracking-[0.17em] text-indigo-600">
+                WORKFLOW ACTION
+              </p>
 
-          {stage === "verified" && (
-            <Button onClick={() => setMatchOpen(true)}>
-              <Scale className="size-4" />
-              Run 3-Way Match
-            </Button>
-          )}
+              <h2 className="mt-1 text-[16px] font-semibold text-slate-900">
+                Invoice Action
+              </h2>
 
-          {stage === "matched" && (
-            <Button onClick={() => setApproveOpen(true)}>
-              <CheckCircle2 className="size-4" />
-              Approve Invoice
-            </Button>
-          )}
+              <p className="mt-1 text-[10px] text-slate-500">
+                Progress invoice controls sequentially through payment
+                completion.
+              </p>
+            </div>
 
-          {stage === "approved" && (
-            <Button onClick={() => setPaymentOpen(true)}>
-              <CircleDollarSign className="size-4" />
-              Mark Payment Paid
-            </Button>
-          )}
+            <div>
+              {stage === "submitted" && (
+                <Button
+                  disabled={!receiptConfirmed}
+                  onClick={() => setVerifyOpen(true)}
+                  className="h-11 rounded-xl bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-500 px-5 text-white"
+                >
+                  <FileCheck2 className="size-4" />
+                  Verify Invoice
+                </Button>
+              )}
+
+              {stage === "verified" && (
+                <Button
+                  onClick={() => setMatchOpen(true)}
+                  className="h-11 rounded-xl bg-gradient-to-r from-violet-500 via-indigo-500 to-cyan-500 px-5 text-white"
+                >
+                  <Scale className="size-4" />
+                  Run 3-Way Match
+                </Button>
+              )}
+
+              {stage === "matched" && (
+                <Button
+                  onClick={() => setApproveOpen(true)}
+                  className="h-11 rounded-xl bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 px-5 text-white"
+                >
+                  <CheckCircle2 className="size-4" />
+                  Approve Invoice
+                </Button>
+              )}
+
+              {stage === "approved" && (
+                <Button
+                  onClick={() => setPaymentOpen(true)}
+                  className="h-11 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 px-5 text-white"
+                >
+                  <CircleDollarSign className="size-4" />
+                  Mark Payment Paid
+                </Button>
+              )}
+            </div>
+          </div>
 
           {stage === "paid" && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2 rounded-lg border border-teal-200 bg-teal-50 px-4 py-3 text-sm font-medium text-teal-800">
+              <div className="flex items-center gap-2 rounded-[14px] border border-emerald-200 bg-emerald-50 px-4 py-3 text-[11px] font-semibold text-emerald-800">
                 <CheckCircle2 className="size-4" />
                 Payment completed successfully
               </div>
 
-              <div className="grid gap-4 rounded-lg border p-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div>
-                  <p className="text-xs text-muted-foreground">
-                    Payment Reference
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-[15px] border border-indigo-100 bg-indigo-50/40 p-4">
+                  <p className="text-[8px] font-semibold tracking-[0.13em] text-indigo-500">
+                    PAYMENT REFERENCE
                   </p>
 
-                  <p className="mt-1 text-sm font-medium">
+                  <p className="mt-2 text-[11px] font-semibold text-slate-900">
                     {paymentDemo.reference}
                   </p>
                 </div>
 
-                <div>
-                  <p className="text-xs text-muted-foreground">Method</p>
-
-                  <p className="mt-1 text-sm font-medium">
-                    {paymentDemo.method}
+                <div className="rounded-[15px] border border-violet-100 bg-violet-50/40 p-4">
+                  <p className="text-[8px] font-semibold tracking-[0.13em] text-violet-500">
+                    METHOD
                   </p>
+
+                  <div className="mt-2 flex items-center gap-2">
+                    <CreditCard className="size-3.5 text-violet-600" />
+
+                    <p className="text-[11px] font-semibold text-slate-900">
+                      {paymentDemo.method}
+                    </p>
+                  </div>
                 </div>
 
-                <div>
-                  <p className="text-xs text-muted-foreground">Paid Date</p>
+                <div className="rounded-[15px] border border-cyan-100 bg-cyan-50/40 p-4">
+                  <p className="text-[8px] font-semibold tracking-[0.13em] text-cyan-700">
+                    PAID DATE
+                  </p>
 
-                  <p className="mt-1 text-sm font-medium">
+                  <p className="mt-2 text-[11px] font-semibold text-slate-900">
                     {formatDate(paymentDemo.paidDate)}
                   </p>
                 </div>
 
-                <div>
-                  <p className="text-xs text-muted-foreground">Amount</p>
+                <div className="rounded-[15px] border border-emerald-100 bg-emerald-50/40 p-4">
+                  <p className="text-[8px] font-semibold tracking-[0.13em] text-emerald-600">
+                    AMOUNT
+                  </p>
 
-                  <p className="mt-1 text-sm font-medium">
+                  <p className="mt-2 text-[11px] font-semibold text-emerald-700">
                     {formatBdt(paymentDemo.amount)}
                   </p>
                 </div>
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </section>
 
       <ConfirmationDialog
         open={verifyOpen}

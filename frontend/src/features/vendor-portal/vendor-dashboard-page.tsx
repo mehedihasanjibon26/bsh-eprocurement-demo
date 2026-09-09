@@ -1,8 +1,10 @@
+import { Badge, Card, CardContent, CardHeader, CardTitle, KpiCard, VendorHero } from "./vendor-portal-ui";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertTriangle,
   ArrowRight,
   Award,
+  CalendarDays,
   FileClock,
   FileText,
   Gavel,
@@ -10,10 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { KpiCard } from "@/components/kpi-card";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { tenderApi } from "@/services/procurement";
 
 import {
@@ -22,6 +21,7 @@ import {
   vendorDashboardDemo,
   vendorDocumentsDemo,
   vendorNotificationsDemo,
+  vendorProfileDemo,
 } from "./vendor-demo-data";
 
 function formatBdt(value: number) {
@@ -50,34 +50,46 @@ export function VendorDashboardPage() {
     .slice(0, 3);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-            SUPPLIER PORTAL
-          </p>
+    <div className="vendor-portal space-y-6">
+      <VendorHero icon={Gavel}>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
+              SUPPLIER PORTAL
+            </p>
 
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Vendor Dashboard
-          </h1>
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Vendor Dashboard
+            </h1>
 
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Track tender opportunities, bid activity, documents, and procurement
-            updates with Bangladesh Specialized Hospital PLC.
-          </p>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              Track tender opportunities, bid activity, documents, and procurement
+              updates with Bangladesh Specialized Hospital PLC.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            className="bg-card"
+            disabled={isFetching}
+            onClick={() => void refetch()}
+          >
+            <RefreshCw className="size-4" />
+            {isFetching ? "Refreshing..." : "Refresh"}
+          </Button>
         </div>
+        <div className="vendor-identity">
+          <strong>{vendorProfileDemo.name}</strong>
+          <span>{vendorProfileDemo.vendorId}</span>
+          <Badge>{vendorProfileDemo.status}</Badge>
+          <span className="sm:ml-auto">{vendorProfileDemo.category}</span>
+        </div>
+      </VendorHero>
 
-        <Button
-          variant="outline"
-          className="bg-card"
-          disabled={isFetching}
-          onClick={() => void refetch()}
-        >
-          <RefreshCw className="size-4" />
-          {isFetching ? "Refreshing..." : "Refresh"}
-        </Button>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-slate-800">Your procurement snapshot</h2>
+        <span className="rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-[10px] font-medium text-indigo-700">Demo account metrics</span>
       </div>
-
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard
           title="Eligible Tenders"
@@ -110,7 +122,7 @@ export function VendorDashboardPage() {
 
       <div className="grid gap-5 xl:grid-cols-3">
         <Card className="xl:col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between gap-4">
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
             <div>
               <CardTitle className="text-base">Open Tenders</CardTitle>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -155,11 +167,11 @@ export function VendorDashboardPage() {
                 No open tenders are currently available.
               </p>
             ) : (
-              <div className="divide-y">
+              <div className="space-y-3">
                 {openTenders.map((tender) => (
                   <div
                     key={tender.id}
-                    className="flex flex-col gap-3 py-4 first:pt-0 last:pb-0 sm:flex-row sm:items-center"
+                    className="vendor-row flex flex-col gap-4 sm:flex-row sm:items-center"
                   >
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -173,6 +185,10 @@ export function VendorDashboardPage() {
                       <p className="mt-1 text-xs text-muted-foreground">
                         {tender.tender_number} · {tender.bid_count} bids
                       </p>
+                      <span className="vendor-deadline mt-3">
+                        <CalendarDays className="size-3.5" aria-hidden="true" />
+                        Closes {new Date(tender.closing_date).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                      </span>
                     </div>
 
                     <Link
@@ -206,7 +222,7 @@ export function VendorDashboardPage() {
               .map((document) => (
                 <div
                   key={document.id}
-                  className="flex gap-3 rounded-lg border p-3"
+                  className="vendor-row flex gap-3"
                 >
                   <AlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-600" />
 
@@ -240,13 +256,14 @@ export function VendorDashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Recent Bid Activity</CardTitle>
+            <p className="text-xs text-muted-foreground">Sample account activity · Open My Bids for saved responses.</p>
           </CardHeader>
 
           <CardContent className="space-y-4">
             {vendorBidsDemo.map((bid) => (
               <div
                 key={bid.id}
-                className="flex flex-col gap-2 border-b pb-4 last:border-0 last:pb-0 sm:flex-row sm:items-center"
+                className="vendor-row flex flex-col gap-3 sm:flex-row sm:items-center"
               >
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium">{bid.title}</p>
@@ -286,7 +303,7 @@ export function VendorDashboardPage() {
             {vendorNotificationsDemo.map((notification) => (
               <div
                 key={notification.id}
-                className="border-b pb-4 last:border-0 last:pb-0"
+                className="vendor-row"
               >
                 <p className="text-sm font-medium">{notification.title}</p>
 
@@ -301,7 +318,7 @@ export function VendorDashboardPage() {
 
       {vendorContractsDemo.length > 0 && (
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-4">
+          <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-4">
             <div>
               <CardTitle className="text-base">
                 Contracts & Purchase Orders

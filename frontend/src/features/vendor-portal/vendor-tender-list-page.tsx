@@ -1,11 +1,10 @@
+import { Badge, Card, CardContent, KpiCard, VendorHero } from "./vendor-portal-ui";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, Gavel, RefreshCw, Search, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { tenderApi } from "@/services/procurement";
 
@@ -69,32 +68,40 @@ export function VendorTenderListPage() {
   }, [category, openTenders, search]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-            PROCUREMENT OPPORTUNITIES
-          </p>
+    <div className="vendor-portal space-y-6">
+      <VendorHero icon={Gavel}>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
+              PROCUREMENT OPPORTUNITIES
+            </p>
 
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Browse Tenders
-          </h1>
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Browse Tenders
+            </h1>
 
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            View current sourcing opportunities published by Bangladesh
-            Specialized Hospital PLC.
-          </p>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              View current sourcing opportunities published by Bangladesh
+              Specialized Hospital PLC.
+            </p>
+          </div>
+
+          <Button
+            variant="outline"
+            className="bg-card"
+            disabled={isFetching}
+            onClick={() => void refetch()}
+          >
+            <RefreshCw className="size-4" />
+            {isFetching ? "Refreshing..." : "Refresh"}
+          </Button>
         </div>
+      </VendorHero>
 
-        <Button
-          variant="outline"
-          className="bg-card"
-          disabled={isFetching}
-          onClick={() => void refetch()}
-        >
-          <RefreshCw className="size-4" />
-          {isFetching ? "Refreshing..." : "Refresh"}
-        </Button>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard title="Open opportunities" value={isPending || isError ? "—" : String(openTenders.length)} description="Published and open for bidding" icon={<Gavel />} />
+        <KpiCard title="Procurement categories" value={isPending || isError ? "—" : String(categories.length)} description="Across the available tenders" icon={<Users />} />
+        <KpiCard title="Matching your search" value={isPending || isError ? "—" : String(filteredTenders.length)} description="Based on your current filters" icon={<Search />} />
       </div>
 
       <Card>
@@ -104,6 +111,7 @@ export function VendorTenderListPage() {
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
               <Input
+                aria-label="Search tenders"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search by tender title or number"
@@ -112,6 +120,7 @@ export function VendorTenderListPage() {
             </div>
 
             <select
+              aria-label="Filter by procurement category"
               value={category}
               onChange={(event) => setCategory(event.target.value)}
               className="h-9 rounded-md border border-input bg-transparent px-3 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/30"
@@ -174,7 +183,7 @@ export function VendorTenderListPage() {
       ) : (
         <div className="grid gap-4 lg:grid-cols-2">
           {filteredTenders.map((tender) => (
-            <Card key={tender.id} className="transition-shadow hover:shadow-md">
+            <Card key={tender.id} className="vendor-tender-card">
               <CardContent className="flex h-full flex-col p-5 sm:p-6">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -198,7 +207,7 @@ export function VendorTenderListPage() {
                     {formatLabel(tender.type)}
                   </span>
 
-                  <span className="flex items-center gap-1.5">
+                  <span className="vendor-deadline">
                     <CalendarDays className="size-3.5" />
                     Closes {formatDate(tender.closing_date)}
                   </span>
@@ -215,7 +224,7 @@ export function VendorTenderListPage() {
                   </Badge>
                 </div>
 
-                <div className="mt-auto flex items-center justify-between gap-3 border-t pt-5">
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-indigo-100 pt-5">
                   <p className="text-xs text-muted-foreground">
                     Review requirements before submitting your bid.
                   </p>

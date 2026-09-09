@@ -1,3 +1,4 @@
+import { Badge, Card, CardContent, CardHeader, CardTitle, VendorHero } from "./vendor-portal-ui";
 import { useState } from "react";
 import {
   CheckCircle2,
@@ -12,9 +13,7 @@ import {
 import { toast } from "sonner";
 
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 import {
@@ -97,21 +96,23 @@ export function VendorInvoicesPage() {
 
   if (!submitted) {
     return (
-      <div className="space-y-6">
-        <div>
-          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-            SUPPLIER BILLING
-          </p>
+      <div className="vendor-portal space-y-6">
+        <VendorHero icon={ReceiptText}>
+          <div>
+            <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
+              SUPPLIER BILLING
+            </p>
 
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            Submit Invoice
-          </h1>
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Submit Invoice
+            </h1>
 
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Submit your supplier invoice against the completed purchase order
-            and confirmed goods receipt.
-          </p>
-        </div>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              Submit your supplier invoice against the completed purchase order
+              and confirmed goods receipt.
+            </p>
+          </div>
+        </VendorHero>
 
         {!receiptConfirmed && (
           <Card>
@@ -138,9 +139,10 @@ export function VendorInvoicesPage() {
           <CardContent className="space-y-6">
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label className="text-xs font-medium">Invoice Number</label>
+                <label htmlFor="vendor-invoice-number" className="text-xs font-medium">Invoice Number</label>
 
                 <Input
+                  id="vendor-invoice-number"
                   className="mt-2"
                   value={invoiceDemo.invoiceNumber}
                   disabled
@@ -148,15 +150,16 @@ export function VendorInvoicesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium">Purchase Order</label>
+                <label htmlFor="vendor-invoice-po" className="text-xs font-medium">Purchase Order</label>
 
-                <Input className="mt-2" value={invoiceDemo.poNumber} disabled />
+                <Input id="vendor-invoice-po" className="mt-2" value={invoiceDemo.poNumber} disabled />
               </div>
 
               <div>
-                <label className="text-xs font-medium">Goods Receipt</label>
+                <label htmlFor="vendor-invoice-receipt" className="text-xs font-medium">Goods Receipt</label>
 
                 <Input
+                  id="vendor-invoice-receipt"
                   className="mt-2"
                   value={invoiceDemo.receiptNumber}
                   disabled
@@ -164,9 +167,10 @@ export function VendorInvoicesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium">Invoice Amount</label>
+                <label htmlFor="vendor-invoice-amount" className="text-xs font-medium">Invoice Amount</label>
 
                 <Input
+                  id="vendor-invoice-amount"
                   className="mt-2"
                   value={formatBdt(invoiceDemo.amount)}
                   disabled
@@ -174,9 +178,10 @@ export function VendorInvoicesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium">Invoice Date</label>
+                <label htmlFor="vendor-invoice-date" className="text-xs font-medium">Invoice Date</label>
 
                 <Input
+                  id="vendor-invoice-date"
                   className="mt-2"
                   value={formatDate(invoiceDemo.submittedDate)}
                   disabled
@@ -184,9 +189,10 @@ export function VendorInvoicesPage() {
               </div>
 
               <div>
-                <label className="text-xs font-medium">Due Date</label>
+                <label htmlFor="vendor-invoice-due" className="text-xs font-medium">Due Date</label>
 
                 <Input
+                  id="vendor-invoice-due"
                   className="mt-2"
                   value={formatDate(invoiceDemo.dueDate)}
                   disabled
@@ -194,7 +200,7 @@ export function VendorInvoicesPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border p-4">
+            <div className="vendor-upload-zone rounded-2xl border border-dashed border-indigo-200 bg-gradient-to-br from-indigo-50/60 via-white to-cyan-50/60 p-6">
               <p className="text-sm font-medium">Invoice Document</p>
 
               <p className="mt-1 text-xs text-muted-foreground">
@@ -213,7 +219,7 @@ export function VendorInvoicesPage() {
                   Choose Invoice File
                   <input
                     type="file"
-                    className="hidden"
+                    className="sr-only"
                     accept=".pdf,.jpg,.jpeg,.png"
                     disabled={!receiptConfirmed}
                     onChange={(event) => {
@@ -263,21 +269,23 @@ export function VendorInvoicesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-          SUPPLIER BILLING
-        </p>
+    <div className="vendor-portal space-y-6">
+      <VendorHero icon={ReceiptText}>
+        <div>
+          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
+            SUPPLIER BILLING
+          </p>
 
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Invoices
-        </h1>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Invoices
+          </h1>
 
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Track submitted invoices, verification, three-way matching, approval,
-          and payment status with Bangladesh Specialized Hospital PLC.
-        </p>
-      </div>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Track submitted invoices, verification, three-way matching, approval,
+            and payment status with Bangladesh Specialized Hospital PLC.
+          </p>
+        </div>
+      </VendorHero>
 
       <Card>
         <CardContent className="p-5 sm:p-6">
@@ -314,7 +322,7 @@ export function VendorInvoicesPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border bg-muted/20 px-4 py-3 lg:min-w-52 lg:text-right">
+            <div className="vendor-amount rounded-lg border px-4 py-3 lg:min-w-52 lg:text-right">
               <p className="text-xs text-muted-foreground">Invoice Amount</p>
 
               <p className="mt-1 text-lg font-semibold">
@@ -382,7 +390,7 @@ export function VendorInvoicesPage() {
           </CardHeader>
 
           <CardContent>
-            <div className="rounded-lg border bg-muted/20 p-4">
+            <div className="vendor-amount rounded-lg border p-5">
               <p className="text-xs text-muted-foreground">
                 Invoice Processing
               </p>
@@ -415,7 +423,7 @@ export function VendorInvoicesPage() {
           <CardTitle className="text-base">Processing Timeline</CardTitle>
         </CardHeader>
 
-        <CardContent className="grid gap-4 md:grid-cols-5">
+        <CardContent className="vendor-timeline grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           <div className="flex items-start gap-3">
             <ReceiptText className="mt-0.5 size-4 text-teal-700" />
 
@@ -428,11 +436,10 @@ export function VendorInvoicesPage() {
 
           <div className="flex items-start gap-3">
             <FileCheck2
-              className={`mt-0.5 size-4 ${
-                stage !== "submitted"
+              className={`mt-0.5 size-4 ${stage !== "submitted"
                   ? "text-teal-700"
                   : "text-muted-foreground"
-              }`}
+                }`}
             />
 
             <div>
@@ -446,11 +453,10 @@ export function VendorInvoicesPage() {
 
           <div className="flex items-start gap-3">
             <Scale
-              className={`mt-0.5 size-4 ${
-                ["matched", "approved", "paid"].includes(stage)
+              className={`mt-0.5 size-4 ${["matched", "approved", "paid"].includes(stage)
                   ? "text-teal-700"
                   : "text-muted-foreground"
-              }`}
+                }`}
             />
 
             <div>
@@ -466,11 +472,10 @@ export function VendorInvoicesPage() {
 
           <div className="flex items-start gap-3">
             <CheckCircle2
-              className={`mt-0.5 size-4 ${
-                ["approved", "paid"].includes(stage)
+              className={`mt-0.5 size-4 ${["approved", "paid"].includes(stage)
                   ? "text-teal-700"
                   : "text-muted-foreground"
-              }`}
+                }`}
             />
 
             <div>
@@ -484,9 +489,8 @@ export function VendorInvoicesPage() {
 
           <div className="flex items-start gap-3">
             <CircleDollarSign
-              className={`mt-0.5 size-4 ${
-                stage === "paid" ? "text-teal-700" : "text-muted-foreground"
-              }`}
+              className={`mt-0.5 size-4 ${stage === "paid" ? "text-teal-700" : "text-muted-foreground"
+                }`}
             />
 
             <div>

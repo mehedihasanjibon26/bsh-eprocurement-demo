@@ -1,11 +1,10 @@
+import { Badge, Card, CardContent, CardHeader, CardTitle, KpiCard, VendorHero } from "./vendor-portal-ui";
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FileText, Gavel } from "lucide-react";
+import { FileText, Gavel, Layers3, Send, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { tenderApi } from "@/services/procurement";
 
 import { vendorBidsDemo } from "./vendor-demo-data";
@@ -121,20 +120,28 @@ export function VendorBidsPage() {
   }, [tenders]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-          BID TRACKING
-        </p>
+    <div className="vendor-portal space-y-6">
+      <VendorHero icon={Gavel}>
+        <div>
+          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
+            BID TRACKING
+          </p>
 
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          My Bids
-        </h1>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            My Bids
+          </h1>
 
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Review your draft, submitted, and active tender responses for
-          Bangladesh Specialized Hospital PLC.
-        </p>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Review your draft, submitted, and active tender responses for
+            Bangladesh Specialized Hospital PLC.
+          </p>
+        </div>
+      </VendorHero>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard title="Tender responses" value={String(bids.length)} description="Saved bids and demo account records" icon={<Layers3 />} />
+        <KpiCard title="Draft bids" value={String(bids.filter((bid) => bid.status === "Draft").length)} description="Continue in your bidding workspace" icon={<FileText />} />
+        <KpiCard title="Submitted responses" value={String(bids.filter((bid) => ["Submitted", "Under Evaluation", "Awarded"].includes(bid.status)).length)} description="Submitted, in review, or awarded" icon={<Send />} />
       </div>
 
       <div className="grid gap-4">
@@ -178,8 +185,8 @@ export function VendorBidsPage() {
                 </div>
 
                 <div className="flex flex-col gap-3 lg:items-end">
-                  <div className="rounded-lg border bg-muted/20 px-4 py-3 lg:min-w-52 lg:text-right">
-                    <p className="text-xs text-muted-foreground">Bid Amount</p>
+                  <div className="vendor-amount rounded-lg border px-4 py-3 lg:min-w-52 lg:text-right">
+                    <p className="flex items-center gap-2 text-xs text-indigo-700"><Wallet className="size-3.5" aria-hidden="true" />Financial envelope · Bid Amount</p>
 
                     <p className="mt-1 text-lg font-semibold">
                       {formatBdt(bid.amount)}
@@ -215,6 +222,18 @@ export function VendorBidsPage() {
             saved drafts, final submissions, and withdrawals remain consistent
             throughout the demo.
           </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-violet-50 p-5">
+              <FileText className="mb-3 size-5 text-indigo-600" aria-hidden="true" />
+              <h3 className="text-sm font-semibold text-indigo-950">Technical envelope</h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-600">Review specifications, compliance responses, and supporting documents in your bid workspace.</p>
+            </div>
+            <div className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-cyan-50 to-emerald-50 p-5">
+              <Wallet className="mb-3 size-5 text-teal-600" aria-hidden="true" />
+              <h3 className="text-sm font-semibold text-teal-950">Financial envelope</h3>
+              <p className="mt-2 text-xs leading-relaxed text-slate-600">Your quoted line items form the BDT total shown above. Submission and withdrawal controls remain in the bid workspace.</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

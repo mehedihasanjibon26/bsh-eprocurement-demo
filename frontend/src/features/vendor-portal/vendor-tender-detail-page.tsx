@@ -1,3 +1,4 @@
+import { Badge, Card, CardContent, CardHeader, CardTitle, VendorHero } from "./vendor-portal-ui";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -10,9 +11,8 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
-import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { procurementError, tenderApi } from "@/services/procurement";
 
 function formatLabel(value: string) {
@@ -55,7 +55,7 @@ export function VendorTenderDetailPage() {
 
   if (isPending) {
     return (
-      <div className="space-y-5">
+      <div className="vendor-portal space-y-5">
         <div className="h-24 animate-pulse rounded-xl border bg-card" />
 
         <div className="grid gap-5 lg:grid-cols-3">
@@ -100,7 +100,7 @@ export function VendorTenderDetailPage() {
   const canSubmitBid = ["published", "bidding_open"].includes(tender.status);
 
   return (
-    <div className="space-y-6">
+    <div className="vendor-portal space-y-6">
       <Link
         to="/vendor/tenders"
         className={buttonVariants({
@@ -113,229 +113,251 @@ export function VendorTenderDetailPage() {
         Back to Tenders
       </Link>
 
-      <div className="flex flex-col gap-5 rounded-xl border bg-card p-5 sm:p-6 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="text-xs font-semibold text-primary">
-              {tender.tender_number}
+      <VendorHero icon={Gavel}>
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-xs font-semibold text-primary">
+                {tender.tender_number}
+              </p>
+
+              <Badge variant="secondary">{formatLabel(tender.status)}</Badge>
+            </div>
+
+            <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
+              {tender.title}
+            </h1>
+
+            <p className="mt-2 text-sm text-muted-foreground">
+              Bangladesh Specialized Hospital PLC
             </p>
 
-            <Badge variant="secondary">{formatLabel(tender.status)}</Badge>
+            <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Gavel className="size-3.5" />
+                {formatLabel(tender.type)}
+              </span>
+
+              <span className="flex items-center gap-1.5">
+                <CalendarDays className="size-3.5" />
+                Closing {formatDate(tender.closing_date)}
+              </span>
+
+              <span className="flex items-center gap-1.5">
+                <Users className="size-3.5" />
+                {tender.bid_count} bids
+              </span>
+
+              <span className="flex items-center gap-1.5">
+                <PackageCheck className="size-3.5" />
+                {formatLabel(tender.category)}
+              </span>
+            </div>
           </div>
 
-          <h1 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">
-            {tender.title}
-          </h1>
+          <div className="vendor-hero-aside w-full shrink-0 p-5 xl:w-64">
+            <p className="text-xs font-medium text-muted-foreground">
+              Bid Submission
+            </p>
 
-          <p className="mt-2 text-sm text-muted-foreground">
-            Bangladesh Specialized Hospital PLC
-          </p>
-
-          <div className="mt-5 flex flex-wrap gap-x-6 gap-y-3 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Gavel className="size-3.5" />
-              {formatLabel(tender.type)}
-            </span>
-
-            <span className="flex items-center gap-1.5">
-              <CalendarDays className="size-3.5" />
-              Closing {formatDate(tender.closing_date)}
-            </span>
-
-            <span className="flex items-center gap-1.5">
-              <Users className="size-3.5" />
-              {tender.bid_count} bids
-            </span>
-
-            <span className="flex items-center gap-1.5">
-              <PackageCheck className="size-3.5" />
-              {formatLabel(tender.category)}
-            </span>
-          </div>
-        </div>
-
-        <div className="w-full shrink-0 rounded-lg border bg-muted/30 p-4 lg:w-64">
-          <p className="text-xs font-medium text-muted-foreground">
-            Bid Submission
-          </p>
-
-          {canSubmitBid ? (
-            <>
-              <p className="mt-2 text-sm font-medium">
-                This tender is accepting supplier bids.
-              </p>
-
-              <Link
-                to={`/vendor/bids/submit/${tender.id}`}
-                className={buttonVariants({
-                  className: "mt-4 w-full",
-                })}
-              >
-                Submit Bid
-              </Link>
-
-              <p className="mt-2 text-center text-[11px] leading-relaxed text-muted-foreground">
-                Complete technical, financial, and supporting document sections
-                before final submission.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="mt-2 text-sm font-medium">
-                Bid submission is currently unavailable.
-              </p>
-
-              <p className="mt-2 text-xs text-muted-foreground">
-                Current tender status: {formatLabel(tender.status)}
-              </p>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-3">
-        <div className="space-y-5 lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Scope of Supply</CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
-                {tender.scope || "Tender scope information is not available."}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">BOQ / Required Items</CardTitle>
-
-              <p className="text-xs text-muted-foreground">
-                Review the requested items and specifications before preparing
-                your bid.
-              </p>
-            </CardHeader>
-
-            <CardContent>
-              {tender.boq.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  No BOQ items have been added.
+            {canSubmitBid ? (
+              <>
+                <p className="mt-2 text-sm font-medium">
+                  This tender is accepting supplier bids.
                 </p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[650px] text-left text-sm">
-                    <thead>
-                      <tr className="border-b text-xs text-muted-foreground">
-                        <th className="pb-3 font-medium">Item</th>
-                        <th className="pb-3 font-medium">Specification</th>
-                        <th className="pb-3 text-right font-medium">
-                          Quantity
-                        </th>
-                        <th className="pb-3 text-right font-medium">
-                          Reference Cost
-                        </th>
+
+                <Link
+                  to={`/vendor/bids/submit/${tender.id}`}
+                  className={buttonVariants({
+                    className: "mt-4 w-full",
+                  })}
+                >
+                  Submit Bid
+                </Link>
+
+                <p className="mt-2 text-center text-[11px] leading-relaxed text-muted-foreground">
+                  Complete technical, financial, and supporting document sections
+                  before final submission.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-sm font-medium">
+                  Bid submission is currently unavailable.
+                </p>
+
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Current tender status: {formatLabel(tender.status)}
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      </VendorHero>
+
+      <Tabs defaultValue="overview" className="vendor-tabs space-y-4">
+        <div className="overflow-x-auto pb-2">
+          <TabsList aria-label="Tender information">
+            <TabsTrigger value="overview">Overview & eligibility</TabsTrigger>
+            <TabsTrigger value="boq">BOQ / Required items</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
+            <TabsTrigger value="notices">Clarifications & addenda</TabsTrigger>
+          </TabsList>
+        </div>
+        <TabsContent value="overview">
+          <div className="grid gap-5 xl:grid-cols-3">
+            <div className="space-y-5 xl:col-span-2"><Card>
+              <CardHeader>
+                <CardTitle className="text-base">Scope of Supply</CardTitle>
+              </CardHeader>
+
+              <CardContent>
+                <p className="whitespace-pre-line text-sm leading-7 text-muted-foreground">
+                  {tender.scope || "Tender scope information is not available."}
+                </p>
+              </CardContent>
+            </Card><Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Vendor Eligibility</CardTitle>
+                </CardHeader>
+
+                <CardContent>
+                  <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground">
+                    {tender.eligibility ||
+                      "Standard hospital vendor eligibility requirements apply."}
+                  </p>
+                </CardContent>
+              </Card></div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Supplier Checklist</CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-3">
+                {[
+                  "Review tender scope and BOQ",
+                  "Confirm vendor eligibility",
+                  "Prepare supporting documents",
+                  "Complete technical and financial bid",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-2.5">
+                    <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-teal-700" />
+
+                    <p className="text-sm text-muted-foreground">{item}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+        <TabsContent value="boq"><Card>
+          <CardHeader>
+            <CardTitle className="text-base">BOQ / Required Items</CardTitle>
+
+            <p className="text-xs text-muted-foreground">
+              Review the requested items and specifications before preparing
+              your bid.
+            </p>
+          </CardHeader>
+
+          <CardContent>
+            {tender.boq.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No BOQ items have been added.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[650px] text-left text-sm">
+                  <thead>
+                    <tr className="border-b text-xs text-muted-foreground">
+                      <th className="pb-3 font-medium">Item</th>
+                      <th className="pb-3 font-medium">Specification</th>
+                      <th className="pb-3 text-right font-medium">
+                        Quantity
+                      </th>
+                      <th className="pb-3 text-right font-medium">
+                        Reference Cost
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {tender.boq.map((item, index) => (
+                      <tr
+                        key={`${item.name}-${index}`}
+                        className="border-b last:border-0"
+                      >
+                        <td className="py-4 font-medium">{item.name}</td>
+
+                        <td className="max-w-xs py-4 text-muted-foreground">
+                          {item.specification}
+                        </td>
+
+                        <td className="py-4 text-right">
+                          {item.quantity} {item.unit}
+                        </td>
+
+                        <td className="py-4 text-right">
+                          {formatBdt(item.unit_cost)}
+                        </td>
                       </tr>
-                    </thead>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card></TabsContent>
+        <TabsContent value="documents"><Card>
+          <CardHeader>
+            <CardTitle className="text-base">Required Documents</CardTitle>
+          </CardHeader>
 
-                    <tbody>
-                      {tender.boq.map((item, index) => (
-                        <tr
-                          key={`${item.name}-${index}`}
-                          className="border-b last:border-0"
-                        >
-                          <td className="py-4 font-medium">{item.name}</td>
-
-                          <td className="max-w-xs py-4 text-muted-foreground">
-                            {item.specification}
-                          </td>
-
-                          <td className="py-4 text-right">
-                            {item.quantity} {item.unit}
-                          </td>
-
-                          <td className="py-4 text-right">
-                            {formatBdt(item.unit_cost)}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="space-y-5">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Vendor Eligibility</CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground">
-                {tender.eligibility ||
-                  "Standard hospital vendor eligibility requirements apply."}
+          <CardContent>
+            {tender.documents.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No additional documents specified.
               </p>
-            </CardContent>
-          </Card>
+            ) : (
+              <div className="space-y-3">
+                {tender.documents.map((document) => (
+                  <div
+                    key={document}
+                    className="vendor-row flex items-start gap-3"
+                  >
+                    <FileText className="mt-0.5 size-4 shrink-0 text-primary" />
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Required Documents</CardTitle>
-            </CardHeader>
+                    <div>
+                      <p className="text-sm font-medium">{document}</p>
 
-            <CardContent>
-              {tender.documents.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  No additional documents specified.
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {tender.documents.map((document) => (
-                    <div
-                      key={document}
-                      className="flex items-start gap-3 rounded-lg border p-3"
-                    >
-                      <FileText className="mt-0.5 size-4 shrink-0 text-primary" />
-
-                      <div>
-                        <p className="text-sm font-medium">{document}</p>
-
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          Required with bid submission
-                        </p>
-                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Required with bid submission
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card></TabsContent>
+        <TabsContent value="notices">
+          <div className="grid gap-5 xl:grid-cols-2">
+            {[{ title: "Clarifications", entries: tender.clarifications }, { title: "Addenda", entries: tender.addenda }].map((section) => (
+              <Card key={section.title}>
+                <CardHeader><CardTitle>{section.title}</CardTitle><p className="text-xs text-muted-foreground">Published tender instructions for suppliers.</p></CardHeader>
+                <CardContent className="space-y-3">
+                  {!section.entries?.length ? <p className="rounded-2xl border border-dashed border-indigo-100 bg-indigo-50/30 p-6 text-sm text-muted-foreground">No {section.title.toLowerCase()} published for this tender.</p> : section.entries.map((entry, index) => (
+                    <div key={index} className="vendor-row">
+                      <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-indigo-600">{section.title} ? {formatDate(entry.at)}</p>
+                      <p className="whitespace-pre-line text-sm leading-relaxed text-slate-600">{entry.note}</p>
                     </div>
                   ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Supplier Checklist</CardTitle>
-            </CardHeader>
-
-            <CardContent className="space-y-3">
-              {[
-                "Review tender scope and BOQ",
-                "Confirm vendor eligibility",
-                "Prepare supporting documents",
-                "Complete technical and financial bid",
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-2.5">
-                  <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-teal-700" />
-
-                  <p className="text-sm text-muted-foreground">{item}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

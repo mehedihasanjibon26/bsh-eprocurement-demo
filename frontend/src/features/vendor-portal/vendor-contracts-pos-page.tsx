@@ -1,3 +1,4 @@
+import { Badge, Card, CardContent, CardHeader, CardTitle, VendorHero } from "./vendor-portal-ui";
 import { useState } from "react";
 import {
   CheckCircle2,
@@ -8,9 +9,7 @@ import {
 import { toast } from "sonner";
 
 import { ConfirmationDialog } from "@/components/confirmation-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
   contractDemo,
@@ -58,21 +57,30 @@ export function VendorContractsPosPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
-          AWARDS & PROCUREMENT ORDERS
-        </p>
+    <div className="vendor-portal space-y-6">
+      <VendorHero icon={ShoppingCart}>
+        <div>
+          <p className="mb-2 text-[10px] font-semibold tracking-[0.18em] text-primary">
+            AWARDS & PROCUREMENT ORDERS
+          </p>
 
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Contracts & POs
-        </h1>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Contracts & POs
+          </h1>
 
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Review awarded procurement, respond to purchase orders, and track
-          active contracts with Bangladesh Specialized Hospital PLC.
-        </p>
-      </div>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Review awarded procurement, respond to purchase orders, and track
+            active contracts with Bangladesh Specialized Hospital PLC.
+          </p>
+        </div>
+      </VendorHero>
+
+      <ol aria-label="Order and contract workflow" className="vendor-workflow grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <li><span className="vendor-step-number">01</span><div><p>Award</p><small>ICU procurement context</small></div></li>
+        <li data-complete={poStage !== "not_issued"}><span className="vendor-step-number">02</span><div><p>Purchase Order</p><small>{poStage === "not_issued" ? "Awaiting issue" : purchaseOrderDemo.poNumber}</small></div></li>
+        <li data-complete={poStage === "accepted"}><span className="vendor-step-number">03</span><div><p>Vendor Acceptance</p><small>{poStage === "accepted" ? "Accepted" : "Awaiting acceptance"}</small></div></li>
+        <li data-complete={contractActive}><span className="vendor-step-number">04</span><div><p>Contract</p><small>{contractActive ? "Active" : "Pending activation"}</small></div></li>
+      </ol>
 
       <Card>
         <CardContent className="p-5 sm:p-6">
@@ -111,7 +119,7 @@ export function VendorContractsPosPage() {
               </div>
             </div>
 
-            <div className="rounded-lg border bg-muted/20 px-4 py-3 lg:min-w-52 lg:text-right">
+            <div className="vendor-amount rounded-lg border px-4 py-3 lg:min-w-52 lg:text-right">
               <p className="text-xs text-muted-foreground">
                 Purchase Order Value
               </p>
@@ -131,7 +139,7 @@ export function VendorContractsPosPage() {
 
         <CardContent>
           {poStage === "not_issued" && (
-            <div className="flex items-start gap-3 rounded-lg border bg-muted/20 p-4">
+            <div className="vendor-notice flex items-start gap-3 rounded-lg border p-5">
               <Clock3 className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 
               <div>
@@ -148,7 +156,7 @@ export function VendorContractsPosPage() {
           )}
 
           {poStage === "issued" && (
-            <div className="flex flex-col gap-4 rounded-lg border bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="vendor-notice flex flex-col gap-4 rounded-lg border p-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
                 <ShoppingCart className="mt-0.5 size-4 shrink-0 text-primary" />
 
@@ -171,7 +179,7 @@ export function VendorContractsPosPage() {
           )}
 
           {poStage === "accepted" && (
-            <div className="flex items-start gap-3 rounded-lg border border-teal-200 bg-teal-50 p-4">
+            <div className="flex items-start gap-3 vendor-success rounded-lg border border-teal-200 bg-teal-50 p-4">
               <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-teal-700" />
 
               <div>
@@ -195,7 +203,7 @@ export function VendorContractsPosPage() {
         </CardHeader>
 
         <CardContent>
-          <div className="flex flex-col gap-5 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="vendor-row flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <FileSignature className="size-4 text-primary" />
@@ -230,7 +238,7 @@ export function VendorContractsPosPage() {
           </div>
 
           {contractActive && (
-            <div className="mt-4 flex items-start gap-3 rounded-lg border border-teal-200 bg-teal-50 p-4">
+            <div className="mt-4 flex items-start gap-3 vendor-success rounded-lg border border-teal-200 bg-teal-50 p-4">
               <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-teal-700" />
 
               <div>
