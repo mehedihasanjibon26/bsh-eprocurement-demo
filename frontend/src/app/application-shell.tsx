@@ -9,7 +9,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { BshBrand } from "@/components/bsh-brand";
+import bshLogoHorizontal from "@/assets/branding/bsh-logo-horizontal.png";
+import bshLogoSquare from "@/assets/branding/bsh-logo-square.png";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -63,6 +64,24 @@ function getNavigation(workspace: Workspace, role: UserRole) {
   return navigation.filter((item) => allowedPaths.includes(item.path));
 }
 
+function WorkspaceBrand() {
+  return (
+    <div>
+      <div className="inline-flex rounded-xl border border-white/10 bg-white px-3 py-2 shadow-sm">
+        <img
+          src={bshLogoHorizontal}
+          alt="Bangladesh Specialized Hospital PLC"
+          className="h-11 w-auto object-contain"
+        />
+      </div>
+
+      <p className="mt-3 text-[9px] font-medium tracking-[0.17em] text-sidebar-foreground/45">
+        E-PROCUREMENT PORTAL
+      </p>
+    </div>
+  );
+}
+
 function WorkspaceNavigation({
   workspace,
   role,
@@ -73,6 +92,7 @@ function WorkspaceNavigation({
   onNavigate?: () => void;
 }) {
   const config = workspaces[workspace];
+
   const navigation = getNavigation(workspace, role);
 
   return (
@@ -161,7 +181,7 @@ function ApplicationShell({ workspace }: { workspace: Workspace }) {
       await logout();
     } catch {
       toast.error(
-        "We couldn’t sign you out. Please check your connection and try again.",
+        "We couldn't sign you out. Please check your connection and try again.",
       );
     } finally {
       setLoggingOut(false);
@@ -178,8 +198,8 @@ function ApplicationShell({ workspace }: { workspace: Workspace }) {
       </a>
 
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col bg-sidebar text-sidebar-foreground lg:flex">
-        <div className="border-b border-sidebar-border px-7 py-7">
-          <BshBrand inverse compact />
+        <div className="border-b border-sidebar-border px-6 py-6">
+          <WorkspaceBrand />
         </div>
 
         <WorkspaceNavigation workspace={workspace} role={user.role} />
@@ -209,7 +229,7 @@ function ApplicationShell({ workspace }: { workspace: Workspace }) {
                 className="gap-0 border-sidebar-border bg-sidebar text-sidebar-foreground data-[side=left]:w-[min(20rem,88vw)]"
               >
                 <div className="border-b border-sidebar-border p-6">
-                  <BshBrand inverse compact />
+                  <WorkspaceBrand />
 
                   <SheetTitle className="sr-only">
                     {config.title} navigation
@@ -229,6 +249,15 @@ function ApplicationShell({ workspace }: { workspace: Workspace }) {
                 <SidebarFooter />
               </SheetContent>
             </Sheet>
+
+            <div className="hidden size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-white p-1.5 shadow-sm sm:flex">
+              <img
+                src={bshLogoSquare}
+                alt=""
+                aria-hidden="true"
+                className="h-full w-full object-contain"
+              />
+            </div>
 
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold">{config.title}</p>
@@ -308,7 +337,7 @@ function ApplicationShell({ workspace }: { workspace: Workspace }) {
         <footer className="flex flex-wrap items-center justify-between gap-2 border-t px-5 py-4 text-[10px] text-muted-foreground sm:px-8">
           <span>Bangladesh Specialized Hospital PLC</span>
 
-          <span>E-Procurement Portal · Client demo</span>
+          <span>E-Procurement Portal • Client demo</span>
         </footer>
       </div>
     </div>
