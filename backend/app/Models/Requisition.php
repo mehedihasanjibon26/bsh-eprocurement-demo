@@ -18,11 +18,13 @@ class Requisition extends Model
         'estimated_budget',
         'required_date',
         'status',
+        'description', 'items', 'history',
     ];
 
     protected function casts(): array
     {
         return [
+            'items' => 'array', 'history' => 'array',
             'estimated_budget' => 'decimal:2',
             'required_date' => 'date',
         ];

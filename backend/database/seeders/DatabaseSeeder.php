@@ -11,8 +11,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DemoUserSeeder::class,
             VendorSeeder::class,
-            TenderSeeder::class,
             RequisitionSeeder::class,
+            TenderSeeder::class,
+            PhaseThreeDemoSeeder::class,
         ]);
     }
 }

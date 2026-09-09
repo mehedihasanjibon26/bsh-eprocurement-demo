@@ -30,7 +30,7 @@ function ApplicationShell({ workspace }: { workspace: Workspace }) {
   const [loggingOut, setLoggingOut] = useState(false);
   const { pathname } = useLocation();
   const config = workspaces[workspace];
-  const current = config.navigation.find((item) => pathname === `/${workspace}/${item.path}`);
+  const current = config.navigation.find((item) => pathname === `/${workspace}/${item.path}` || pathname.startsWith(`/${workspace}/${item.path}/`));
   if (!user) return null;
 
   async function signOut() {

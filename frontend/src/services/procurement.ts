@@ -1,86 +1,34 @@
-import { api } from "@/services/api";
+import axios from "axios";
+import { api } from "./api";
+import type { RequisitionForm, RequisitionRecord, TenderForm, TenderRecord, VendorRecord } from "@/types/procurement-records";
 
-import type { Requisition, Tender, Vendor } from "@/types/procurement";
-
-type ApiResponse<T> = {
-  data: T;
+export const requisitionApi = {
+  list: async (signal?: AbortSignal) => (await api.get<{ data: RequisitionRecord[] }>("/requisitions", { signal })).data.data,
+  get: async (id: string, signal?: AbortSignal) => (await api.get<{ data: RequisitionRecord }>(`/requisitions/${id}`, { signal })).data.data,
+  save: async (data: RequisitionForm, id?: number) => (await api.request<{ data: RequisitionRecord }>({ url: id ? `/requisitions/${id}` : "/requisitions", method: id ? "PUT" : "POST", data })).data.data,
+  action: async (id: number, action: string, note?: string) => (await api.post<{ data: RequisitionRecord }>(`/requisitions/${id}/actions`, { action, note })).data.data,
+  convert: async (id: number, data: { title: string; type: string; closing_date: string }) => (await api.post<{ data: TenderRecord }>(`/requisitions/${id}/convert`, data)).data.data,
 };
 
-type VendorApiRecord = {
-  id: number;
-  name: string;
-  category: Vendor["category"];
-  status: Vendor["status"];
-  performance_score: string | null;
-  document_expiry_alert: string | null;
+export const vendorApi = {
+  list: async (signal?: AbortSignal) => (await api.get<{ data: VendorRecord[] }>("/vendors", { signal })).data.data,
+  get: async (id: string, signal?: AbortSignal) => (await api.get<{ data: VendorRecord }>(`/vendors/${id}`, { signal })).data.data,
+  action: async (id: number, action: string, note?: string) => (await api.post<{ data: VendorRecord }>(`/vendors/${id}/actions`, { action, note })).data.data,
 };
 
-type RequisitionApiRecord = {
-  id: number;
-  requisition_number: string;
-  department: string;
-  title: string;
-  category: Requisition["category"];
-  requester: string;
-  estimated_budget: string;
-  required_date: string;
-  status: Requisition["status"];
+export const tenderApi = {
+  list: async (signal?: AbortSignal) => (await api.get<{ data: TenderRecord[] }>("/tenders", { signal })).data.data,
+  get: async (id: string, signal?: AbortSignal) => (await api.get<{ data: TenderRecord }>(`/tenders/${id}`, { signal })).data.data,
+  save: async (data: TenderForm, id?: number) => (await api.request<{ data: TenderRecord }>({ url: id ? `/tenders/${id}` : "/tenders", method: id ? "PUT" : "POST", data })).data.data,
+  action: async (id: number, action: string, note?: string, closing_date?: string) => (await api.post<{ data: TenderRecord }>(`/tenders/${id}/actions`, { action, note, closing_date })).data.data,
 };
 
-type TenderApiRecord = {
-  id: number;
-  tender_number: string;
-  title: string;
-  category: Tender["category"];
-  type: Tender["type"];
-  closing_date: string;
-  status: Tender["status"];
-  bid_count: number;
-};
-
-export async function getVendors(): Promise<Vendor[]> {
-  const response = await api.get<ApiResponse<VendorApiRecord[]>>("/vendors");
-
-  return response.data.data.map((vendor) => ({
-    id: String(vendor.id),
-    name: vendor.name,
-    category: vendor.category,
-    status: vendor.status,
-    performanceScore:
-      vendor.performance_score === null
-        ? undefined
-        : Number(vendor.performance_score),
-    documentExpiryAlert: vendor.document_expiry_alert ?? undefined,
-  }));
-}
-
-export async function getRequisitions(): Promise<Requisition[]> {
-  const response =
-    await api.get<ApiResponse<RequisitionApiRecord[]>>("/requisitions");
-
-  return response.data.data.map((requisition) => ({
-    id: requisition.requisition_number,
-    department: requisition.department,
-    title: requisition.title,
-    category: requisition.category,
-    requester: requisition.requester,
-    estimatedBudget: Number(requisition.estimated_budget),
-    requiredDate: requisition.required_date,
-    status: requisition.status,
-  }));
-}
-
-export async function getTenders(): Promise<Tender[]> {
-  const response = await api.get<ApiResponse<TenderApiRecord[]>>("/tenders");
-
-  return response.data.data.map((tender) => ({
-    id: String(tender.id),
-    tenderNumber: tender.tender_number,
-    title: tender.title,
-    category: tender.category,
-    type: tender.type,
-    closingDate: tender.closing_date,
-    status: tender.status,
-    bidCount: tender.bid_count,
-  }));
+export function procurementError(error: unknown) {
+  if (axios.isAxiosError(error)) {
+    if (error.response?.status === 404) return "This record could not be found.";
+    const errors = error.response?.data?.errors as Record<string, string[]> | undefined;
+    if (errors) return Object.values(errors).flat().join(" ");
+    if (error.response?.status && error.response.status < 500) return String(error.response.data?.message || "This action is unavailable for your account.");
+  }
+  return "We couldn't connect to the procurement service. Please try again.";
 }

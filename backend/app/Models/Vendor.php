@@ -15,11 +15,13 @@ class Vendor extends Model
         'status',
         'performance_score',
         'document_expiry_alert',
+        'profile', 'history',
     ];
 
     protected function casts(): array
     {
         return [
+            'profile' => 'array', 'history' => 'array',
             'performance_score' => 'decimal:1',
         ];
     }
