@@ -129,6 +129,27 @@ function workspaceRoutes(workspace: Workspace) {
               ).InvoicePaymentPage,
             }),
           },
+          {
+            path: "reports",
+            lazy: async () => ({
+              Component: (await import("@/features/reports/reports-page"))
+                .ReportsPage,
+            }),
+          },
+          {
+            path: "audit-log",
+            lazy: async () => ({
+              Component: (await import("@/features/audit/audit-log-page"))
+                .AuditLogPage,
+            }),
+          },
+          {
+            path: "admin-center",
+            lazy: async () => ({
+              Component: (await import("@/features/admin/admin-center-page"))
+                .AdminCenterPage,
+            }),
+          },
         ]
       : []),
 
@@ -220,6 +241,9 @@ function workspaceRoutes(workspace: Workspace) {
             "contracts",
             "delivery-receipts",
             "invoices-payments",
+            "reports",
+            "audit-log",
+            "admin-center",
           ].includes(item.path);
         }
 

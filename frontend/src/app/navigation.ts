@@ -10,6 +10,7 @@ import {
   Receipt,
   ScrollText,
   Search,
+  Settings2,
   ShoppingCart,
   Truck,
   UserRound,
@@ -106,14 +107,21 @@ export const workspaces: Record<
         label: "Reports",
         icon: BarChart3,
         description:
-          "Procurement reports and spend summaries in BDT will appear here.",
+          "Procurement reports, spend summaries, tender activity, and vendor performance will appear here.",
       },
       {
         path: "audit-log",
         label: "Audit Log",
         icon: FileClock,
         description:
-          "Procurement actions and approval history will appear here.",
+          "Traceable procurement actions, approvals, and activity history will appear here.",
+      },
+      {
+        path: "admin-center",
+        label: "Admin Center",
+        icon: Settings2,
+        description:
+          "Procurement notifications and essential workflow controls will appear here.",
       },
     ],
   },
