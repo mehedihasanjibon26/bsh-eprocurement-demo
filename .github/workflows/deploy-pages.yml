@@ -23,6 +23,9 @@ jobs:
       run:
         working-directory: frontend
 
+    env:
+      VITE_DEMO_MODE: "true"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
